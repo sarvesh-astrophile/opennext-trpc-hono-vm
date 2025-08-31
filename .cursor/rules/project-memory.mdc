@@ -1,0 +1,213 @@
+---
+description: Project Memory for OpenNext + tRPC + Hono + Cloudflare Full-Stack Application
+globs:
+alwaysApply: true
+---
+
+# Project Memory: OpenNext + tRPC + Hono + Cloudflare
+
+## Project Overview
+This is a modern, type-safe full-stack application that enables users to create and view posts with optimal performance through Cloudflare Workers and edge computing. The project combines OpenNext (Next.js for Cloudflare), tRPC for type-safe communication, Hono for the backend API, and SQLite with Drizzle ORM for data persistence.
+
+## Architecture
+
+### Frontend (Cloudflare Workers)
+- **Location**: `/frontend/`
+- **Framework**: Next.js 15.4.6 with OpenNext adapter
+- **Runtime**: Bun
+- **Deployment**: Cloudflare Workers via OpenNext
+- **UI Framework**: shadcn/ui with Tailwind CSS 4
+- **Fonts**: Geist Sans and Geist Mono
+- **Key Features**:
+  - Edge computing with global distribution
+  - Type-safe communication with backend via tRPC
+  - Modern UI with shadcn/ui components
+  - Optimized for Cloudflare's 10MB bundle limit
+
+### Backend (VM Deployment)
+- **Location**: `/backend/`
+- **Framework**: Hono 4.9.5
+- **Runtime**: Bun
+- **Database**: SQLite with Drizzle ORM
+- **Key Features**:
+  - Lightweight, fast API server
+  - Type-safe database operations with Drizzle
+  - RESTful endpoints for post management
+  - Health check endpoint
+
+### Database
+- **Type**: SQLite
+- **ORM**: Drizzle ORM 0.44.5
+- **Schema**: Posts table with id, content, and created_at fields
+- **Location**: `sqlite.db` in backend directory
+- **Migrations**: Managed via Drizzle Kit
+
+## Project Structure
+
+```
+opennext-trpc-hono-cf/
+├── frontend/                 # Next.js app (Cloudflare Workers)
+│   ├── src/
+│   │   ├── app/             # Next.js app router
+│   │   │   ├── layout.tsx   # Root layout with Geist fonts
+│   │   │   ├── page.tsx     # Home page (default Next.js template)
+│   │   │   ├── globals.css  # Tailwind CSS with custom theme
+│   │   │   └── favicon.ico
+│   │   └── lib/
+│   │       └── utils.ts     # Utility functions (cn for class merging)
+│   ├── public/              # Static assets (SVG icons)
+│   ├── package.json         # Dependencies and scripts
+│   ├── next.config.ts       # Next.js config with OpenNext
+│   ├── open-next.config.ts  # OpenNext Cloudflare configuration
+│   ├── wrangler.jsonc       # Cloudflare Workers configuration
+│   ├── components.json      # shadcn/ui configuration
+│   └── tsconfig.json        # TypeScript configuration
+│
+├── backend/                 # Hono API (VM deployment)
+│   ├── src/
+│   │   ├── index.ts         # Main Hono application
+│   │   └── db/
+│   │       └── schema/
+│   │           └── post.ts  # Database schema and test query
+│   ├── adapter.ts           # Database adapter with LibSQL client
+│   ├── drizzle.config.ts    # Drizzle Kit configuration
+│   ├── package.json         # Dependencies and scripts
+│   ├── sqlite.db           # SQLite database file
+│   └── tsconfig.json        # TypeScript configuration
+│
+├── docs/
+│   └── prd.md              # Project Requirements Document
+├── README.md               # Comprehensive project documentation
+├── task.md                 # Project task breakdown and timeline
+└── final.md                # (Excluded from memory as requested)
+```
+
+## Key Dependencies
+
+### Frontend Dependencies
+- `@opennextjs/cloudflare`: ^1.3.0 - OpenNext adapter for Cloudflare
+- `next`: 15.4.6 - React framework
+- `react`: 19.1.0 - UI library
+- `tailwindcss`: ^4 - CSS framework
+- `class-variance-authority`: ^0.7.1 - Component variant management
+- `clsx`: ^2.1.1 - Conditional className utility
+- `tailwind-merge`: ^3.3.1 - Tailwind class merging
+- `lucide-react`: ^0.542.0 - Icon library
+- `wrangler`: ^4.33.1 - Cloudflare Workers CLI
+
+### Backend Dependencies
+- `hono`: ^4.9.5 - Web framework
+- `drizzle-orm`: ^0.44.5 - Type-safe ORM
+- `drizzle-kit`: ^0.31.4 - Database toolkit
+- `@libsql/client`: ^0.15.14 - LibSQL client
+- `better-sqlite3`: ^12.2.0 - SQLite driver
+- `zod`: ^4.1.5 - Schema validation
+- `dotenv`: ^17.2.1 - Environment variables
+
+## Configuration Files
+
+### Frontend Configuration
+- **next.config.ts**: Basic Next.js config with OpenNext Cloudflare initialization
+- **open-next.config.ts**: OpenNext configuration (R2 cache commented out)
+- **wrangler.jsonc**: Cloudflare Workers config with Node.js compatibility
+- **components.json**: shadcn/ui configuration with New York style
+- **tsconfig.json**: TypeScript config with path aliases (@/*)
+
+### Backend Configuration
+- **drizzle.config.ts**: Drizzle Kit config for SQLite with schema path
+- **adapter.ts**: Database connection using LibSQL client with Zod validation
+- **tsconfig.json**: TypeScript config with strict settings and path aliases
+
+## Current Implementation Status
+
+### Completed
+- ✅ Project structure setup
+- ✅ Frontend Next.js with OpenNext configuration
+- ✅ Backend Hono basic setup
+- ✅ Database schema definition
+- ✅ TypeScript configurations
+- ✅ shadcn/ui setup with Tailwind CSS
+- ✅ Cloudflare Workers configuration
+
+### In Progress/Planned
+- 🔄 tRPC integration between frontend and backend
+- 🔄 Post creation and retrieval API endpoints
+- 🔄 UI components for post management
+- 🔄 Database migrations
+- 🔄 Deployment configurations
+
+## Development Commands
+
+### Frontend
+```bash
+cd frontend
+bun run dev          # Start development server with Turbopack
+bun run build        # Build for production
+bun run start        # Start production server
+bun run lint         # Run ESLint
+bun run deploy       # Deploy to Cloudflare Workers
+bun run preview      # Preview Cloudflare deployment
+bun run cf-typegen   # Generate Cloudflare types
+```
+
+### Backend
+```bash
+cd backend
+bun run dev          # Start development server with hot reload
+bun run db:generate  # Generate database types (planned)
+bun run db:migrate   # Run database migrations (planned)
+```
+
+## Database Schema
+```sql
+-- Posts table (planned)
+CREATE TABLE posts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+## API Endpoints (Planned)
+- `POST /api/posts` - Create a new post
+- `GET /api/posts` - Retrieve all posts
+- `GET /api/health` - Health check
+
+## Deployment Strategy
+- **Frontend**: Cloudflare Workers via OpenNext
+- **Backend**: VM deployment with PM2 process management
+- **Database**: SQLite file on VM
+- **Domain**: Custom domain configuration planned
+
+## Performance Targets
+- API response time < 500ms
+- UI loads in < 2s
+- Bundle size under Cloudflare's 10MB limit
+- Near-instant cold start times (~0ms)
+
+## Security Considerations
+- Input validation with Zod schemas
+- CORS configuration for cross-origin requests
+- SQL injection prevention via Drizzle ORM
+- HTTPS automatic SSL termination at Cloudflare edge
+
+## Development Environment
+- **OS**: Linux (WSL2)
+- **Runtime**: Bun
+- **Package Manager**: Bun
+- **IDE**: Cursor
+- **Version Control**: Git
+
+## Project Goals
+1. Demonstrate modern full-stack development with edge computing
+2. Showcase type-safe communication between frontend and backend
+3. Optimize for performance and developer experience
+4. Deploy on Cloudflare Workers for global distribution
+5. Implement a simple but complete CRUD application
+
+## Notes
+- The project is currently in early development phase
+- Basic structure is in place but core functionality (tRPC, API endpoints, UI) needs implementation
+- Database schema is defined but migrations need to be created
+- Frontend is using default Next.js template and needs custom components
+- Backend has basic Hono setup but needs API route implementation

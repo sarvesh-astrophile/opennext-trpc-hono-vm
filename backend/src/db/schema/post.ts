@@ -1,4 +1,4 @@
-import { db } from "@/adapters";
+import { db } from "@/adapter";
 import { sql } from "drizzle-orm";
 
 
