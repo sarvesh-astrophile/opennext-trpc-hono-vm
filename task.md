@@ -15,13 +15,13 @@
 - [x] Deploy initial setup to Cloudflare
 
 ### Backend Setup (Hono + SQLite + Drizzle)
-- [ ] Initialize Hono project on VM
-- [ ] Install SQLite and Drizzle ORM
-- [ ] Define database schema for posts
-- [ ] Set up database connection
-- [ ] Create initial migrations
-- [ ] Configure Drizzle in `drizzle/config.ts`
-- [ ] Set up basic Hono application structure
+- [x] Initialize Hono project on VM
+- [x] Install SQLite and Drizzle ORM
+- [x] Define database schema for posts
+- [x] Set up database connection
+- [x] Create initial migrations
+- [x] Configure Drizzle in `drizzle/config.ts`
+- [x] Set up basic Hono application structure
 
 ## Phase 2: API Development (Week 2)
 
