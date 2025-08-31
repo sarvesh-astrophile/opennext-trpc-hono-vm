@@ -3,16 +3,16 @@
 ## Phase 1: Setup (Week 1)
 
 ### Frontend Setup (OpenNext + Next.js)
-- [ ] Initialize Next.js project with TypeScript
-- [ ] Configure OpenNext for Cloudflare workers
-- [ ] Set up basic project structure (app router, components, lib)
-- [ ] Install required dependencies:
+- [x] Initialize Next.js project with TypeScript
+- [x] Configure OpenNext for Cloudflare workers
+- [x] Set up basic project structure (app router, components, lib)
+- [x] Install required dependencies:
   - `@open-next/open-next`
   - `@trpc/react-query`
   - `shadcn/ui`
-- [ ] Configure OpenNext in `open-next.config.js`
-- [ ] Set up Cloudflare Workers config in `wrangler.toml`
-- [ ] Deploy initial setup to Cloudflare
+- [x] Configure OpenNext in `open-next.config.js`
+- [x] Set up Cloudflare Workers config in `wrangler.toml`
+- [x] Deploy initial setup to Cloudflare
 
 ### Backend Setup (Hono + SQLite + Drizzle)
 - [ ] Initialize Hono project on VM
