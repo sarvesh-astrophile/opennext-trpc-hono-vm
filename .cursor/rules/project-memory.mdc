@@ -49,12 +49,16 @@ opennext-trpc-hono-cf/
 ├── frontend/                 # Next.js app (Cloudflare Workers)
 │   ├── src/
 │   │   ├── app/             # Next.js app router
-│   │   │   ├── layout.tsx   # Root layout with Geist fonts
-│   │   │   ├── page.tsx     # Home page (default Next.js template)
+│   │   │   ├── layout.tsx   # Root layout with Geist fonts and tRPC provider
+│   │   │   ├── page.tsx     # Home page with post management UI
 │   │   │   ├── globals.css  # Tailwind CSS with custom theme
 │   │   │   └── favicon.ico
 │   │   └── lib/
-│   │       └── utils.ts     # Utility functions (cn for class merging)
+│   │       ├── utils.ts     # Utility functions (cn for class merging)
+│   │       └── trpc/
+│   │           ├── client.ts    # tRPC client configuration
+│   │           ├── provider.tsx # tRPC provider with React Query
+│   │           └── hooks.ts     # Custom tRPC hooks for posts
 │   ├── public/              # Static assets (SVG icons)
 │   ├── package.json         # Dependencies and scripts
 │   ├── next.config.ts       # Next.js config with OpenNext
@@ -65,10 +69,16 @@ opennext-trpc-hono-cf/
 │
 ├── backend/                 # Hono API (VM deployment)
 │   ├── src/
-│   │   ├── index.ts         # Main Hono application
+│   │   ├── index.ts         # Main Hono application with tRPC
+│   │   ├── trpc/
+│   │   │   ├── router.ts    # tRPC router with post procedures
+│   │   │   └── context.ts   # tRPC context and initialization
 │   │   └── db/
 │   │       └── schema/
-│   │           └── post.ts  # Database schema and test query
+│   │           └── post.ts  # Database schema definition
+│   ├── drizzle/             # Database migrations
+│   │   ├── 0000_melodic_monster_badoon.sql
+│   │   └── meta/            # Migration metadata
 │   ├── adapter.ts           # Database adapter with LibSQL client
 │   ├── drizzle.config.ts    # Drizzle Kit configuration
 │   ├── package.json         # Dependencies and scripts
@@ -86,8 +96,14 @@ opennext-trpc-hono-cf/
 
 ### Frontend Dependencies
 - `@opennextjs/cloudflare`: ^1.3.0 - OpenNext adapter for Cloudflare
+- `@tanstack/react-query`: ^5.85.6 - Data fetching and caching
+- `@trpc/client`: ^11.5.0 - tRPC client for type-safe API calls
+- `@trpc/next`: ^11.5.0 - Next.js integration for tRPC
+- `@trpc/react-query`: ^11.5.0 - React Query integration for tRPC
+- `@trpc/server`: ^11.5.0 - tRPC server utilities
 - `next`: 15.4.6 - React framework
 - `react`: 19.1.0 - UI library
+- `react-dom`: 19.1.0 - React DOM utilities
 - `tailwindcss`: ^4 - CSS framework
 - `class-variance-authority`: ^0.7.1 - Component variant management
 - `clsx`: ^2.1.1 - Conditional className utility
@@ -96,6 +112,8 @@ opennext-trpc-hono-cf/
 - `wrangler`: ^4.33.1 - Cloudflare Workers CLI
 
 ### Backend Dependencies
+- `@hono/trpc-server`: ^0.4.0 - Hono integration for tRPC
+- `@trpc/server`: ^11.5.0 - tRPC server framework
 - `hono`: ^4.9.5 - Web framework
 - `drizzle-orm`: ^0.44.5 - Type-safe ORM
 - `drizzle-kit`: ^0.31.4 - Database toolkit
@@ -123,18 +141,22 @@ opennext-trpc-hono-cf/
 ### Completed
 - ✅ Project structure setup
 - ✅ Frontend Next.js with OpenNext configuration
-- ✅ Backend Hono basic setup
-- ✅ Database schema definition
+- ✅ Backend Hono with tRPC integration
+- ✅ Database schema definition and migrations
 - ✅ TypeScript configurations
 - ✅ shadcn/ui setup with Tailwind CSS
 - ✅ Cloudflare Workers configuration
+- ✅ tRPC integration between frontend and backend
+- ✅ Post creation and retrieval API endpoints
+- ✅ UI components for post management
+- ✅ Database migrations (posts table created)
+- ✅ Full CRUD functionality for posts
 
 ### In Progress/Planned
-- 🔄 tRPC integration between frontend and backend
-- 🔄 Post creation and retrieval API endpoints
-- 🔄 UI components for post management
-- 🔄 Database migrations
+- 🔄 Environment variable configuration for production
 - 🔄 Deployment configurations
+- 🔄 Error handling improvements
+- 🔄 Testing implementation
 
 ## Development Commands
 
@@ -154,24 +176,40 @@ bun run cf-typegen   # Generate Cloudflare types
 ```bash
 cd backend
 bun run dev          # Start development server with hot reload
-bun run db:generate  # Generate database types (planned)
-bun run db:migrate   # Run database migrations (planned)
+bun run db:generate  # Generate database types
+bun run db:migrate   # Run database migrations
+bun run db:push      # Push schema changes to database
+bun run lint         # Run ESLint
+bun run lint:fix     # Fix ESLint issues
 ```
 
 ## Database Schema
 ```sql
--- Posts table (planned)
+-- Posts table (implemented)
 CREATE TABLE posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   content TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 ```
 
-## API Endpoints (Planned)
-- `POST /api/posts` - Create a new post
-- `GET /api/posts` - Retrieve all posts
-- `GET /api/health` - Health check
+### Database Implementation
+- **Schema Location**: `backend/src/db/schema/post.ts`
+- **Migration**: `backend/drizzle/0000_melodic_monster_badoon.sql`
+- **Connection**: LibSQL client with Drizzle ORM
+- **Validation**: Zod schemas for environment variables
+
+## API Endpoints
+
+### tRPC Procedures (Implemented)
+- `getPosts` - Retrieve all posts with ordering by creation date
+- `createPost` - Create a new post with content validation
+- `getPost` - Retrieve a single post by ID
+
+### REST Endpoints
+- `GET /health` - Health check endpoint
+- `GET /` - Basic hello world endpoint
+- `POST /trpc/*` - tRPC endpoint for all procedures
 
 ## Deployment Strategy
 - **Frontend**: Cloudflare Workers via OpenNext
@@ -206,8 +244,10 @@ CREATE TABLE posts (
 5. Implement a simple but complete CRUD application
 
 ## Notes
-- The project is currently in early development phase
-- Basic structure is in place but core functionality (tRPC, API endpoints, UI) needs implementation
-- Database schema is defined but migrations need to be created
-- Frontend is using default Next.js template and needs custom components
-- Backend has basic Hono setup but needs API route implementation
+- The project has a fully functional implementation with tRPC integration
+- Frontend includes a complete post management UI with create and view functionality
+- Backend has working tRPC procedures for post CRUD operations
+- Database schema is implemented with migrations applied
+- Environment variable configuration needed for production deployment
+- CORS is configured for cross-origin requests between frontend and backend
+- The application is ready for deployment with proper environment setup

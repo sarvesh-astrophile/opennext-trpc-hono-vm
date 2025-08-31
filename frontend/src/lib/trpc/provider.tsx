@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
 import { trpc } from './client';
-import { env } from 'cloudflare:workers';
 
 export function TRPCProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -12,7 +11,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: env.NEXT_PUBLIC_BACKEND_URL,
+          url: process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3000/trpc',
           // You can add headers here if needed
           // headers: () => ({
           //   authorization: getAuthCookie(),
