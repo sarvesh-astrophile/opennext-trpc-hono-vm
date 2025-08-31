@@ -8,7 +8,7 @@ export const schema = {
 };
 
 const EnvSchema = z.object({
-  DATABASE_URL: z.string(),
+  DATABASE_URL: z.url(),
 });
 
 const env = EnvSchema.parse(process.env);
