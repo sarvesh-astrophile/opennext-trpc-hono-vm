@@ -12,10 +12,6 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
       links: [
         httpBatchLink({
           url: process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:3000/trpc',
-          // You can add headers here if needed
-          // headers: () => ({
-          //   authorization: getAuthCookie(),
-          // }),
         }),
       ],
     })

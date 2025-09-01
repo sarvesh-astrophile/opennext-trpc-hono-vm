@@ -34,7 +34,7 @@
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
 	"vars": {
-		"NEXT_PUBLIC_BACKEND_URL": "http://localhost:3000/trpc"
+		"NEXT_PUBLIC_BACKEND_URL": "http://localhost:3001/trpc"
 	}
 	/**
 	 * Note: Use secrets to store sensitive data.
