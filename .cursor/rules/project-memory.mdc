@@ -49,6 +49,10 @@ opennext-trpc-hono-cf/
 ├── frontend/                 # Next.js app (Cloudflare Workers)
 │   ├── src/
 │   │   ├── app/             # Next.js app router
+│   │   │   ├── api/         # API routes
+│   │   │   │   └── trpc-proxy/  # tRPC proxy to backend
+│   │   │   │       └── [...trpc]/
+│   │   │   │           └── route.ts  # Proxy route handler
 │   │   │   ├── layout.tsx   # Root layout with Geist fonts and tRPC provider
 │   │   │   ├── page.tsx     # Home page with post management UI
 │   │   │   ├── globals.css  # Tailwind CSS with custom theme
@@ -65,14 +69,19 @@ opennext-trpc-hono-cf/
 │   ├── open-next.config.ts  # OpenNext Cloudflare configuration
 │   ├── wrangler.jsonc       # Cloudflare Workers configuration
 │   ├── components.json      # shadcn/ui configuration
+│   ├── cloudflare-env.d.ts  # Cloudflare environment types
+│   ├── eslint.config.mjs    # ESLint configuration
+│   ├── postcss.config.mjs   # PostCSS configuration
 │   └── tsconfig.json        # TypeScript configuration
 │
 ├── backend/                 # Hono API (VM deployment)
 │   ├── src/
 │   │   ├── index.ts         # Main Hono application with tRPC
 │   │   ├── trpc/
-│   │   │   ├── router.ts    # tRPC router with post procedures
-│   │   │   └── context.ts   # tRPC context and initialization
+│   │   │   ├── root.ts      # Main tRPC router
+│   │   │   ├── context.ts   # tRPC context and initialization
+│   │   │   └── routers/
+│   │   │       └── post.ts  # Post router with CRUD procedures
 │   │   └── db/
 │   │       └── schema/
 │   │           └── post.ts  # Database schema definition
@@ -83,7 +92,10 @@ opennext-trpc-hono-cf/
 │   ├── drizzle.config.ts    # Drizzle Kit configuration
 │   ├── package.json         # Dependencies and scripts
 │   ├── sqlite.db           # SQLite database file
-│   └── tsconfig.json        # TypeScript configuration
+│   ├── Dockerfile          # Docker configuration for backend
+│   ├── docker-compose.yml  # Docker Compose for local development
+│   ├── eslint.config.mjs   # ESLint configuration
+│   └── tsconfig.json       # TypeScript configuration
 │
 ├── docs/
 │   └── prd.md              # Project Requirements Document
@@ -110,6 +122,7 @@ opennext-trpc-hono-cf/
 - `tailwind-merge`: ^3.3.1 - Tailwind class merging
 - `lucide-react`: ^0.542.0 - Icon library
 - `wrangler`: ^4.33.1 - Cloudflare Workers CLI
+- `tw-animate-css`: ^1.3.7 - Tailwind animation utilities
 
 ### Backend Dependencies
 - `@hono/trpc-server`: ^0.4.0 - Hono integration for tRPC
@@ -118,7 +131,6 @@ opennext-trpc-hono-cf/
 - `drizzle-orm`: ^0.44.5 - Type-safe ORM
 - `drizzle-kit`: ^0.31.4 - Database toolkit
 - `@libsql/client`: ^0.15.14 - LibSQL client
-- `better-sqlite3`: ^12.2.0 - SQLite driver
 - `zod`: ^4.1.5 - Schema validation
 - `dotenv`: ^17.2.1 - Environment variables
 
@@ -130,11 +142,17 @@ opennext-trpc-hono-cf/
 - **wrangler.jsonc**: Cloudflare Workers config with Node.js compatibility
 - **components.json**: shadcn/ui configuration with New York style
 - **tsconfig.json**: TypeScript config with path aliases (@/*)
+- **eslint.config.mjs**: ESLint configuration for code quality
+- **postcss.config.mjs**: PostCSS configuration for Tailwind CSS
+- **cloudflare-env.d.ts**: TypeScript definitions for Cloudflare environment
 
 ### Backend Configuration
 - **drizzle.config.ts**: Drizzle Kit config for SQLite with schema path
 - **adapter.ts**: Database connection using LibSQL client with Zod validation
 - **tsconfig.json**: TypeScript config with strict settings and path aliases
+- **eslint.config.mjs**: ESLint configuration for code quality
+- **Dockerfile**: Docker configuration for containerized deployment
+- **docker-compose.yml**: Docker Compose setup for local development
 
 ## Current Implementation Status
 
@@ -202,19 +220,27 @@ CREATE TABLE posts (
 ## API Endpoints
 
 ### tRPC Procedures (Implemented)
-- `getPosts` - Retrieve all posts with ordering by creation date
-- `createPost` - Create a new post with content validation
-- `getPost` - Retrieve a single post by ID
+- `post.getPosts` - Retrieve all posts with ordering by creation date
+- `post.createPost` - Create a new post with content validation (input: { content: string })
+- `post.getPost` - Retrieve a single post by ID (input: { id: number })
 
 ### REST Endpoints
 - `GET /health` - Health check endpoint
 - `GET /` - Basic hello world endpoint
 - `POST /trpc/*` - tRPC endpoint for all procedures
 
+### Frontend API Routes
+- `POST /api/trpc-proxy/[...trpc]` - Proxy route to backend tRPC server
+- `GET /api/trpc-proxy/[...trpc]` - Proxy route for tRPC queries
+- `OPTIONS /api/trpc-proxy/[...trpc]` - CORS preflight handling
+
 ## Deployment Strategy
 - **Frontend**: Cloudflare Workers via OpenNext
-- **Backend**: VM deployment with PM2 process management
-- **Database**: SQLite file on VM
+- **Backend**: VM deployment with Docker containerization
+  - Docker Compose for local development
+  - Dockerfile for production deployment
+  - Health checks and restart policies
+- **Database**: SQLite file on VM with Docker volume persistence
 - **Domain**: Custom domain configuration planned
 
 ## Performance Targets
@@ -246,8 +272,12 @@ CREATE TABLE posts (
 ## Notes
 - The project has a fully functional implementation with tRPC integration
 - Frontend includes a complete post management UI with create and view functionality
-- Backend has working tRPC procedures for post CRUD operations
+- Backend has working tRPC procedures for post CRUD operations with proper router structure
 - Database schema is implemented with migrations applied
+- Frontend uses tRPC proxy pattern to communicate with backend
+- Docker containerization is set up for backend deployment
 - Environment variable configuration needed for production deployment
 - CORS is configured for cross-origin requests between frontend and backend
 - The application is ready for deployment with proper environment setup
+- ESLint configurations are in place for both frontend and backend
+- PostCSS and Tailwind CSS 4 are properly configured

@@ -1,0 +1,17 @@
+{
+  "name": "opennext-trpc-hono-cf",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"bun run dev --workspace=frontend\" \"bun run dev --workspace=backend\"",
+    "build": "bun run build --workspace=frontend && bun run build --workspace=backend",
+    "type-check": "bun run type-check --workspace=frontend && bun run type-check --workspace=backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  }
+}

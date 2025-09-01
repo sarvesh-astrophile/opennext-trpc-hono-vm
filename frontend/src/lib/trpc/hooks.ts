@@ -4,6 +4,6 @@ import { trpc } from './client';
 export const trpcHooks = trpc;
 
 // Specific hooks for posts
-export const useGetPosts = () => trpc.getPosts.useQuery();
-export const useCreatePost = () => trpc.createPost.useMutation();
-export const useGetPost = (id: number) => trpc.getPost.useQuery({ id });
+export const useGetPosts = () => trpc.post.getPosts.useQuery();
+export const useCreatePost = () => trpc.post.createPost.useMutation();
+export const useGetPost = (id: number) => trpc.post.getPost.useQuery({ id });

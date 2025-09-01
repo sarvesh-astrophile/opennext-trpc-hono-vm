@@ -1,6 +1,7 @@
 'use client';
 
 import { useGetPosts, useCreatePost } from '../lib/trpc/hooks';
+import type { Post } from '@backend/db/schema/post';
 import { useState } from 'react';
 
 export default function Home() {
@@ -56,7 +57,7 @@ export default function Home() {
           <p className="text-gray-500">No posts yet. Create your first post above!</p>
         )}
 
-        {posts?.map((post) => (
+        {posts?.map((post: Post) => (
           <div key={post.id} className="p-4 border rounded-lg">
             <p className="text-gray-800">{post.content}</p>
             <p className="text-sm text-gray-500 mt-2">

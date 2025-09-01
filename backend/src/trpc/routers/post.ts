@@ -34,4 +34,4 @@ export const postRouter = router({
     }),
 });
 
-export type AppRouter = typeof postRouter;
+
