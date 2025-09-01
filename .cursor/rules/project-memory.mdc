@@ -57,12 +57,14 @@ opennext-trpc-hono-cf/
 │   │   │   ├── page.tsx     # Home page with post management UI
 │   │   │   ├── globals.css  # Tailwind CSS with custom theme
 │   │   │   └── favicon.ico
-│   │   └── lib/
-│   │       ├── utils.ts     # Utility functions (cn for class merging)
-│   │       └── trpc/
-│   │           ├── client.ts    # tRPC client configuration
-│   │           ├── provider.tsx # tRPC provider with React Query
-│   │           └── hooks.ts     # Custom tRPC hooks for posts
+│   │   ├── lib/
+│   │   │   ├── utils.ts     # Utility functions (cn for class merging)
+│   │   │   └── trpc/
+│   │   │       ├── client.ts    # tRPC client configuration
+│   │   │       ├── provider.tsx # tRPC provider with React Query
+│   │   │       └── hooks.ts     # Custom tRPC hooks for posts
+│   │   └── types/
+│   │       └── index.ts     # Frontend-specific types and re-exports
 │   ├── public/              # Static assets (SVG icons)
 │   ├── package.json         # Dependencies and scripts
 │   ├── next.config.ts       # Next.js config with OpenNext
@@ -82,9 +84,11 @@ opennext-trpc-hono-cf/
 │   │   │   ├── context.ts   # tRPC context and initialization
 │   │   │   └── routers/
 │   │   │       └── post.ts  # Post router with CRUD procedures
-│   │   └── db/
-│   │       └── schema/
-│   │           └── post.ts  # Database schema definition
+│   │   ├── db/
+│   │   │   └── schema/
+│   │   │       └── post.ts  # Database schema definition
+│   │   └── types/
+│   │       └── index.ts     # Backend types and shared type definitions
 │   ├── drizzle/             # Database migrations
 │   │   ├── 0000_melodic_monster_badoon.sql
 │   │   └── meta/            # Migration metadata
@@ -97,10 +101,15 @@ opennext-trpc-hono-cf/
 │   ├── eslint.config.mjs   # ESLint configuration
 │   └── tsconfig.json       # TypeScript configuration
 │
+├── shared/                  # Shared types and utilities
+│   └── types.ts            # Common type definitions
+│
 ├── docs/
 │   └── prd.md              # Project Requirements Document
 ├── README.md               # Comprehensive project documentation
 ├── task.md                 # Project task breakdown and timeline
+├── package.json            # Root workspace configuration
+├── tsconfig.json           # Root TypeScript project references
 └── final.md                # (Excluded from memory as requested)
 ```
 
@@ -134,7 +143,15 @@ opennext-trpc-hono-cf/
 - `zod`: ^4.1.5 - Schema validation
 - `dotenv`: ^17.2.1 - Environment variables
 
+### Root Workspace Dependencies
+- `concurrently`: ^8.2.2 - Run multiple commands concurrently
+- `typescript`: ^5.3.3 - TypeScript compiler
+
 ## Configuration Files
+
+### Root Workspace Configuration
+- **package.json**: Workspace configuration with frontend and backend workspaces
+- **tsconfig.json**: Root TypeScript project references configuration
 
 ### Frontend Configuration
 - **next.config.ts**: Basic Next.js config with OpenNext Cloudflare initialization
@@ -177,6 +194,13 @@ opennext-trpc-hono-cf/
 - 🔄 Testing implementation
 
 ## Development Commands
+
+### Root Workspace
+```bash
+bun run dev          # Start both frontend and backend concurrently
+bun run build        # Build both frontend and backend
+bun run type-check   # Type check both frontend and backend
+```
 
 ### Frontend
 ```bash
@@ -271,6 +295,8 @@ CREATE TABLE posts (
 
 ## Notes
 - The project has a fully functional implementation with tRPC integration
+- **Monorepo Structure**: Project now uses Bun workspaces with root-level configuration
+- **Type Organization**: Centralized type definitions in `shared/types.ts` and dedicated `types/` directories
 - Frontend includes a complete post management UI with create and view functionality
 - Backend has working tRPC procedures for post CRUD operations with proper router structure
 - Database schema is implemented with migrations applied
@@ -281,3 +307,5 @@ CREATE TABLE posts (
 - The application is ready for deployment with proper environment setup
 - ESLint configurations are in place for both frontend and backend
 - PostCSS and Tailwind CSS 4 are properly configured
+- **Concurrent Development**: Root workspace allows running both frontend and backend simultaneously
+- **Type Safety**: Enhanced type sharing between frontend and backend through centralized type definitions
