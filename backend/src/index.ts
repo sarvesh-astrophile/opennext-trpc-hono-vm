@@ -1,24 +1,19 @@
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { trpcServer } from '@hono/trpc-server'
 import { appRouter } from './trpc/root'
 import { createTRPCContext } from './trpc/context'
 
 const app = new Hono()
 
-// CORS middleware
-app.use('/trpc/*', async (c, next) => {
-  // Set CORS headers
-  c.header('Access-Control-Allow-Origin', '*') // In production, specify your frontend domain
-  c.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-  c.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-
-  // Handle preflight requests
-  if (c.req.method === 'OPTIONS') {
-    return c.text('', 200)
-  }
-
-  await next()
-})
+// CORS middleware using Hono's built-in cors middleware
+const corsOrigin = process.env['CORS_ORIGIN'] ?? '*';
+app.use('/trpc/*', cors({
+  origin: corsOrigin, 
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}))
 
 // tRPC endpoint
 app.use('/trpc/*', trpcServer({

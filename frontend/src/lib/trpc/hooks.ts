@@ -1,4 +1,4 @@
-import { trpc } from './client';
+import { trpc } from '@/lib/trpc/client';
 
 // Export tRPC hooks for easy access
 export const trpcHooks = trpc;
