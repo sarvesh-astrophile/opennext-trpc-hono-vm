@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { trpcServer } from '@hono/trpc-server'
-import { appRouter } from './trpc/router'
+import { appRouter } from './trpc/root'
 import { createTRPCContext } from './trpc/context'
 
 const app = new Hono()

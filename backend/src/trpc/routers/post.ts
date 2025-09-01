@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { router, publicProcedure } from './context';
-import { posts } from '../db/schema/post';
+import { router, publicProcedure } from '@/trpc/context';
+import { posts } from '@/db/schema/post';
 import { eq } from 'drizzle-orm';
 
-export const appRouter = router({
+export const postRouter = router({
   // Get all posts
   getPosts: publicProcedure.query(async ({ ctx }) => {
     const allPosts = await ctx.db.select().from(posts).orderBy(posts.createdAt);
@@ -34,4 +34,4 @@ export const appRouter = router({
     }),
 });
 
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof postRouter;
